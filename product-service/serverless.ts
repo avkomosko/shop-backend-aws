@@ -1,3 +1,4 @@
+import { esBuildConfiguration } from './esBuild.config';
 import type { AWS } from '@serverless/typescript';
 
 import { getProductList, getProductById } from '@functions/index';
@@ -24,16 +25,7 @@ const serverlessConfiguration: AWS = {
   functions: { getProductList, getProductById },
   package: { individually: true },
   custom: {
-    esbuild: {
-      bundle: true,
-      minify: true,
-      sourcemap: false,
-      exclude: ['aws-sdk'],
-      target: 'node16',
-      define: { 'require.resolve': undefined },
-      platform: 'node',
-      concurrency: 10,
-    },
+    esbuild: esBuildConfiguration
   },
 };
 
