@@ -1,3 +1,4 @@
+import { swaggerConfig } from './swagger.config';
 import { esBuildConfiguration } from './esBuild.config';
 import type { AWS } from '@serverless/typescript';
 
@@ -6,7 +7,7 @@ import { getProductList, getProductById } from '@functions/index';
 const serverlessConfiguration: AWS = {
   service: 'productsservice',
   frameworkVersion: '3',
-  plugins: ['serverless-esbuild'],
+  plugins: ['serverless-auto-swagger','serverless-esbuild'],
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
@@ -25,7 +26,8 @@ const serverlessConfiguration: AWS = {
   functions: { getProductList, getProductById },
   package: { individually: true },
   custom: {
-    esbuild: esBuildConfiguration
+    esbuild: esBuildConfiguration,
+    autoswagger: swaggerConfig,
   },
 };
 
