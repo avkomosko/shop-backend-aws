@@ -20,7 +20,7 @@ const createProduct: ValidatedEventAPIGatewayProxyEvent<
     ? JSON.parse(event.body)
     : event.body as Product;
 
-  console.log('Product  ', event.body);
+  console.log('Event  ', event);
 
   try {
     const productItem: ProductWithoutCount = createProductItem(productWithoutCount);

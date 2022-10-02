@@ -16,7 +16,9 @@ const { PRODUCTS_TABLE, STOCK_TABLE } = process.env;
 
 const dynamo = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
-const uploadToDB = async () => {
+const uploadToDB = async event => {
+  console.log('Event  ', event);
+
   try {
     for await (const mockItem of productsMock) {
       const { count, ...product } = mockItem;

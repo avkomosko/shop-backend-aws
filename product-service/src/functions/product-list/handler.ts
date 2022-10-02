@@ -19,7 +19,9 @@ const dynamo = new DynamoDB.DocumentClient({ apiVersion: '2012-08-10' });
 
 const getProductList: ValidatedEventAPIGatewayProxyEvent<
   ProductListResponse
-> = async () => {
+> = async event => {
+  console.log('Event  ', event);
+
   try {
     const { Items: productsList } = await dynamo
       .scan({

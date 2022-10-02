@@ -16,7 +16,7 @@ const getProductById: ValidatedEventAPIGatewayProxyEvent<
   ProductResponse
 > = async event => {
   const { productId } = event.pathParameters;
-  console.log('Product ID ', productId);
+  console.log('Event  ', event);
 
   try {
     const { Items: [ product ] } = await dynamo
