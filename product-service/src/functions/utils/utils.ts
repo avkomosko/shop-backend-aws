@@ -27,3 +27,17 @@ export const createStockItem = (
   product_id: string,
   count: number
 ): StockItem => ({ product_id, count });
+
+const isValidRequest = ({ title, description, price }: ProductWithoutCount): boolean => {
+  return isValidPrice(price) && isValidstring(title) && isValidstring(description);
+};
+
+const isValidPrice = (price: number): boolean => {
+  return typeof price === "number" && price >= 0;
+};
+
+const isValidstring = (string: string): boolean => {
+  return typeof string === "string" && string.length !== 0;
+}
+
+export const isNotValidRequest = (request: ProductWithoutCount): boolean => !isValidRequest(request);

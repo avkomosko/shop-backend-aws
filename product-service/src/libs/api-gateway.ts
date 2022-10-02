@@ -21,10 +21,12 @@ export const formatJSONResponse = (response: Record<string, unknown>) => {
   };
 };
 
-export const formatJSONRCreatedResponse = () => {
+export const formatJSONRCreatedResponse = (
+  body: string | Record<string, unknown> = DATA_CREATED
+) => {
   return {
     statusCode: HTTPCODE.CREATED,
-    body: JSON.stringify(DATA_CREATED),
+    body: JSON.stringify(body),
   };
 };
 

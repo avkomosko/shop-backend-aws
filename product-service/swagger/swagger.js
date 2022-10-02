@@ -29,6 +29,32 @@
             "description": "Server error"
           }
         }
+      },
+      "post": {
+        "summary": "createProduct",
+        "description": "",
+        "operationId": "createProduct.post.products",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Product created",
+            "schema": {
+              "$ref": "#/definitions/ProductResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
       }
     },
     "/products/{productId}": {
