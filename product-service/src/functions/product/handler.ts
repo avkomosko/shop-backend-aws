@@ -38,10 +38,10 @@ const getProductById: ValidatedEventAPIGatewayProxyEvent<
     console.log('Product ', product, 'Count', stock);
 
     return product && stock
-      ? formatJSONResponse({
+      ? formatJSONResponse({ product: {
           ...product as ProductWithoutCount,
           count: (stock as StockItem).count
-        })
+        }})
       : formatJSOnErrorResponse(
           HTTPCODE.NOT_FOUND,
           new Error(PRODUCT_NOT_FOUND_MESSAGE)
