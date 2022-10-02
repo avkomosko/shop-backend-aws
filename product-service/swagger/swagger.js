@@ -65,6 +65,28 @@
           }
         }
       }
+    },
+    "/upload": {
+      "get": {
+        "summary": "uploadToDB",
+        "description": "",
+        "operationId": "uploadToDB.get.upload",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Data uploaded"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
     }
   },
   "definitions": {
@@ -121,6 +143,28 @@
       ],
       "additionalProperties": false,
       "title": "Product",
+      "type": "object"
+    },
+    "ProductWithoutCount": {
+      "title": "ProductWithoutCount"
+    },
+    "StockItem": {
+      "properties": {
+        "product_id": {
+          "title": "StockItem.product_id",
+          "type": "string"
+        },
+        "count": {
+          "title": "StockItem.count",
+          "type": "number"
+        }
+      },
+      "required": [
+        "product_id",
+        "count"
+      ],
+      "additionalProperties": false,
+      "title": "StockItem",
       "type": "object"
     },
     "ProductResponse": {

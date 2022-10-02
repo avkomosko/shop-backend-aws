@@ -6,6 +6,13 @@ export interface Product {
   title: string
 }
 
+export type ProductWithoutCount = Omit<Product, 'count'>;
+
+export interface StockItem {
+  product_id: string,
+  count: number
+}
+
 export interface ProductResponse {
   product: Product
 }

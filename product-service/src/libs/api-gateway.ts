@@ -1,4 +1,4 @@
-import { HTTPCODE } from '@functions/constants';
+import { DATA_CREATED, HTTPCODE } from '@functions/constants';
 import type {
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
@@ -21,7 +21,17 @@ export const formatJSONResponse = (response: Record<string, unknown>) => {
   };
 };
 
-export const formatJSOnErrorResponse = (statusCode: number, { message }: Error) => {
+export const formatJSONRCreatedResponse = () => {
+  return {
+    statusCode: HTTPCODE.CREATED,
+    body: JSON.stringify(DATA_CREATED),
+  };
+};
+
+export const formatJSOnErrorResponse = (
+  statusCode: number,
+  { message }: Error
+) => {
   return {
     statusCode,
     body: JSON.stringify({ message }),
