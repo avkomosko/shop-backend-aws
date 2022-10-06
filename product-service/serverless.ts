@@ -1,9 +1,13 @@
 import { swaggerConfig } from './swagger.config';
 import { esBuildConfiguration } from './esBuild.config';
 import type { AWS } from '@serverless/typescript';
+import * as dotenv from 'dotenv';
+import { env } from 'process';
 
 import { getProductList, getProductById, uploadToDB, createProduct } from '@functions/index';
 import { Tables } from '@functions/constants';
+
+dotenv.config();
 
 const serverlessConfiguration: AWS = {
   service: 'productsservice',
@@ -21,6 +25,8 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
+      PRODUCTS_TABLE: env.PRODUCT_TABLE_NAME,
+      STOCK_TABLE: env.STOCK_TABLE_NAME
     },
     iamRoleStatements:[
       {
@@ -33,7 +39,7 @@ const serverlessConfiguration: AWS = {
           'dynamodb:UpdateItem',
           'dynamodb:DeleteItem'
         ],
-        Resource: "arn:aws:dynamodb:eu-west-1:559851237825:table/*"
+        Resource: `${env.TABLE_ARN}/*`
       }
     ]
   },
