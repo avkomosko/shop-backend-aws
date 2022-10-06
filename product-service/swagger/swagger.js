@@ -29,6 +29,32 @@
             "description": "Server error"
           }
         }
+      },
+      "post": {
+        "summary": "createProduct",
+        "description": "",
+        "operationId": "createProduct.post.products",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Product created",
+            "schema": {
+              "$ref": "#/definitions/ProductResponse"
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
       }
     },
     "/products/{productId}": {
@@ -59,6 +85,28 @@
           },
           "404": {
             "description": "Product not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/upload": {
+      "get": {
+        "summary": "uploadToDB",
+        "description": "",
+        "operationId": "uploadToDB.get.upload",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Data uploaded"
           },
           "500": {
             "description": "Server error"
@@ -121,6 +169,28 @@
       ],
       "additionalProperties": false,
       "title": "Product",
+      "type": "object"
+    },
+    "ProductWithoutCount": {
+      "title": "ProductWithoutCount"
+    },
+    "StockItem": {
+      "properties": {
+        "product_id": {
+          "title": "StockItem.product_id",
+          "type": "string"
+        },
+        "count": {
+          "title": "StockItem.count",
+          "type": "number"
+        }
+      },
+      "required": [
+        "product_id",
+        "count"
+      ],
+      "additionalProperties": false,
+      "title": "StockItem",
       "type": "object"
     },
     "ProductResponse": {
