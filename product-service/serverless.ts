@@ -4,7 +4,7 @@ import type { AWS } from '@serverless/typescript';
 import * as dotenv from 'dotenv';
 import { env } from 'process';
 
-import { getProductList, getProductById, uploadToDB, createProduct } from '@functions/index';
+import { getProductList, getProductById, uploadToDB, createProduct, catalogBatchProcess } from '@functions/index';
 import { Tables } from '@functions/constants';
 
 dotenv.config();
@@ -44,7 +44,7 @@ const serverlessConfiguration: AWS = {
     ]
   },
   // import the function via paths
-  functions: { getProductList, getProductById, uploadToDB, createProduct },
+  functions: { getProductList, getProductById, uploadToDB, createProduct, catalogBatchProcess },
   package: { individually: true },
   custom: {
     esbuild: esBuildConfiguration,
