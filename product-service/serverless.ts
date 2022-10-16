@@ -27,6 +27,7 @@ const serverlessConfiguration: AWS = {
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       PRODUCTS_TABLE: env.PRODUCT_TABLE_NAME,
       STOCK_TABLE: env.STOCK_TABLE_NAME,
+      TOPIC_ARN: { Ref: env.SNS_TOPIC },
     },
     iamRoleStatements:[
       {
@@ -45,6 +46,11 @@ const serverlessConfiguration: AWS = {
         Effect: 'Allow',
         Action: [ 'sqs:*' ],
         Resource: { 'Fn::GetAtt': [ 'SQSQueue', 'Arn' ] },
+      },
+      {
+        Effect: 'Allow',
+        Action: ['sns:*'],
+        Resource: { Ref: env.SNS_TOPIC },
       },
     ]
   },
@@ -104,6 +110,20 @@ const serverlessConfiguration: AWS = {
       [env.SQS_QUEUE]: {
         Type: 'AWS::SQS::Queue',
         Properties: { QueueName: env.SQS_QUEUE_NAME },
+      },
+      [env.SNS_TOPIC]: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: env.SNS_TOPIC_NAME,
+        },
+      },
+      SNSSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: env.email,
+          Protocol: 'email',
+          TopicArn: { Ref: env.SNS_TOPIC },
+        },
       },
     },
     Outputs: {

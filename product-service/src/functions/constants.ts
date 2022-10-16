@@ -6,6 +6,8 @@ export const DATA_IS_NOT_VALID = 'Product data is not valid'
 
 export const REGION = 'eu-west-1';
 
+export const TOPIC_SUBJECT = 'Products was added to the store';
+
 export const enum HTTPCODE {
   OK = 200,
   CREATED = 201,
