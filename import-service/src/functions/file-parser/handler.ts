@@ -3,13 +3,11 @@ import { middyfy } from '@libs/lambda';
 import { S3CreateEvent } from 'aws-lambda';
 import csvParser from 'csv-parser';
 
-import { createKeyForParsedFile } from 'src/utils';
+import { createKeyForParsedFile, normilizeHeader } from 'src/utils';
 import { formatJSONResponse } from '@libs/api-gateway';
 import { FILE_PARSED, HTTPCODE, REGION, S3Events } from 'src/constants';
 import { S3Params } from 'src/models/params.model';
 import { env } from 'process';
-
-const parser = csvParser();
 
 const importFileParser = async (event: S3CreateEvent) => {
   try {
@@ -32,7 +30,11 @@ const importFileParser = async (event: S3CreateEvent) => {
       const parsedChunks = [];
       s3.getObject(params)
         .createReadStream()
-        .pipe(parser)
+        .pipe(
+          csvParser({
+            mapHeaders: ({ header }) => normilizeHeader(header),
+          })
+        )
         .on(S3Events.ERROR, error => {
           reject(error.message);
         })

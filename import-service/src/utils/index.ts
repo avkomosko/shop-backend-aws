@@ -17,3 +17,5 @@ export const getParamsWithExpirationAndContentType = (
 
 export const createKeyForParsedFile = (key: string) =>
   `parsed${key.slice(key.lastIndexOf('/'), key.lastIndexOf('.'))}.json`;
+
+export const normilizeHeader = (header: string) => header.trim().toLowerCase();
