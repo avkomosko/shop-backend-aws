@@ -12,7 +12,7 @@ dotenv.config();
 const serverlessConfiguration: AWS = {
   service: 'productsservice',
   frameworkVersion: '3',
-  plugins: ['serverless-auto-swagger','serverless-esbuild'],
+  plugins: [ 'serverless-auto-swagger','serverless-esbuild' ],
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
@@ -26,7 +26,7 @@ const serverlessConfiguration: AWS = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       PRODUCTS_TABLE: env.PRODUCT_TABLE_NAME,
-      STOCK_TABLE: env.STOCK_TABLE_NAME
+      STOCK_TABLE: env.STOCK_TABLE_NAME,
     },
     iamRoleStatements:[
       {
@@ -39,8 +39,13 @@ const serverlessConfiguration: AWS = {
           'dynamodb:UpdateItem',
           'dynamodb:DeleteItem'
         ],
-        Resource: `${env.TABLE_ARN}/*`
-      }
+        Resource: `${ env.TABLE_ARN }/*`
+      },
+      {
+        Effect: 'Allow',
+        Action: [ 'sqs:*' ],
+        Resource: { 'Fn::GetAtt': [ 'SQSQueue', 'Arn' ] },
+      },
     ]
   },
   // import the function via paths
@@ -96,7 +101,31 @@ const serverlessConfiguration: AWS = {
           },
         }
       },
-    }
+      [env.SQS_QUEUE]: {
+        Type: 'AWS::SQS::Queue',
+        Properties: { QueueName: env.SQS_QUEUE_NAME },
+      },
+    },
+    Outputs: {
+      SQSQueueInstanceARN: {
+        Description: 'SQS Queue instance',
+        Value: {
+          'Fn::GetAtt': [ 'SQSQueue', 'Arn' ],
+        },
+        Export: {
+          Name: env.SQS_QUEUE_NAME,
+        },
+      },
+      SQSQueueInstanceURL: {
+        Description: 'SQS Queue instance',
+        Value: {
+          Ref: env.SQS_QUEUE
+        },
+        Export: {
+          Name: env.SQS_QUEUE_NAME_URL,
+        },
+      },
+    },
   }
 };
 

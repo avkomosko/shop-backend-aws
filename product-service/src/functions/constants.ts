@@ -2,7 +2,9 @@ export const PRODUCT_NOT_FOUND_MESSAGE = 'Product not found';
 
 export const DATA_CREATED = 'Data created';
 
-export const DATA_IS_NOT_VALID = "Product data is not valid"
+export const DATA_IS_NOT_VALID = 'Product data is not valid'
+
+export const REGION = 'eu-west-1';
 
 export const enum HTTPCODE {
   OK = 200,
