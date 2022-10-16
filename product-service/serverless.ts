@@ -117,12 +117,26 @@ const serverlessConfiguration: AWS = {
           TopicName: env.SNS_TOPIC_NAME,
         },
       },
-      SNSSubscription: {
+      SNSDiscountSubscription: {
         Type: 'AWS::SNS::Subscription',
         Properties: {
-          Endpoint: env.email,
+          Endpoint: env.DISCOUNTS_EMAIL,
           Protocol: 'email',
           TopicArn: { Ref: env.SNS_TOPIC },
+          FilterPolicy: {
+            price: [{ numeric: [ '<', 10 ] }]
+          }
+        },
+      },
+      SNSOutOfStockSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: env.OUT_OF_STOCK_EMAIL,
+          Protocol: 'email',
+          TopicArn: { Ref: env.SNS_TOPIC },
+          FilterPolicy: {
+            count: [{ numeric: [ '<', 5 ] }]
+          }
         },
       },
     },
