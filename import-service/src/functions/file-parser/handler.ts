@@ -1,14 +1,13 @@
-import { S3 } from 'aws-sdk';
+import { S3, SQS } from 'aws-sdk';
 import { middyfy } from '@libs/lambda';
 import { S3CreateEvent } from 'aws-lambda';
 import csvParser from 'csv-parser';
 
-import { createKeyForParsedFile } from 'src/utils';
+import { createKeyForParsedFile, normilizeHeader } from 'src/utils';
 import { formatJSONResponse } from '@libs/api-gateway';
 import { FILE_PARSED, HTTPCODE, REGION, S3Events } from 'src/constants';
 import { S3Params } from 'src/models/params.model';
-
-const parser = csvParser();
+import { env } from 'process';
 
 const importFileParser = async (event: S3CreateEvent) => {
   try {
@@ -21,6 +20,7 @@ const importFileParser = async (event: S3CreateEvent) => {
       },
     ] = event.Records;
     const s3 = new S3({ region: REGION });
+    const sqs = new SQS({ region: REGION });
     const params: S3Params = {
       Bucket: name,
       Key: key,
@@ -30,15 +30,26 @@ const importFileParser = async (event: S3CreateEvent) => {
       const parsedChunks = [];
       s3.getObject(params)
         .createReadStream()
-        .pipe(parser)
+        .pipe(
+          csvParser({
+            mapHeaders: ({ header }) => normilizeHeader(header),
+          })
+        )
         .on(S3Events.ERROR, error => {
           reject(error.message);
         })
         .on(S3Events.DATA, chunk => {
-          console.log(chunk);
-          parsedChunks.push(chunk);
+          parsedChunks.push(
+            sqs
+              .sendMessage({
+                QueueUrl: env.SQS_QUEUE_URL,
+                MessageBody: JSON.stringify(chunk),
+              })
+              .promise(),
+          );
         })
         .on(S3Events.END, async () => {
+          await Promise.allSettled(parsedChunks);
           resolve(parsedChunks);
         });
     });

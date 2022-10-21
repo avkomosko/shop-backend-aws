@@ -4,7 +4,7 @@ import type { AWS } from '@serverless/typescript';
 import * as dotenv from 'dotenv';
 import { env } from 'process';
 
-import { getProductList, getProductById, uploadToDB, createProduct } from '@functions/index';
+import { getProductList, getProductById, uploadToDB, createProduct, catalogBatchProcess } from '@functions/index';
 import { Tables } from '@functions/constants';
 
 dotenv.config();
@@ -12,7 +12,7 @@ dotenv.config();
 const serverlessConfiguration: AWS = {
   service: 'productsservice',
   frameworkVersion: '3',
-  plugins: ['serverless-auto-swagger','serverless-esbuild'],
+  plugins: [ 'serverless-auto-swagger','serverless-esbuild' ],
   provider: {
     name: 'aws',
     runtime: 'nodejs14.x',
@@ -26,7 +26,8 @@ const serverlessConfiguration: AWS = {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       PRODUCTS_TABLE: env.PRODUCT_TABLE_NAME,
-      STOCK_TABLE: env.STOCK_TABLE_NAME
+      STOCK_TABLE: env.STOCK_TABLE_NAME,
+      TOPIC_ARN: { Ref: env.SNS_TOPIC },
     },
     iamRoleStatements:[
       {
@@ -39,12 +40,22 @@ const serverlessConfiguration: AWS = {
           'dynamodb:UpdateItem',
           'dynamodb:DeleteItem'
         ],
-        Resource: `${env.TABLE_ARN}/*`
-      }
+        Resource: `${ env.TABLE_ARN }/*`
+      },
+      {
+        Effect: 'Allow',
+        Action: [ 'sqs:*' ],
+        Resource: { 'Fn::GetAtt': [ 'SQSQueue', 'Arn' ] },
+      },
+      {
+        Effect: 'Allow',
+        Action: ['sns:*'],
+        Resource: { Ref: env.SNS_TOPIC },
+      },
     ]
   },
   // import the function via paths
-  functions: { getProductList, getProductById, uploadToDB, createProduct },
+  functions: { getProductList, getProductById, uploadToDB, createProduct, catalogBatchProcess },
   package: { individually: true },
   custom: {
     esbuild: esBuildConfiguration,
@@ -96,7 +107,59 @@ const serverlessConfiguration: AWS = {
           },
         }
       },
-    }
+      [env.SQS_QUEUE]: {
+        Type: 'AWS::SQS::Queue',
+        Properties: { QueueName: env.SQS_QUEUE_NAME },
+      },
+      [env.SNS_TOPIC]: {
+        Type: 'AWS::SNS::Topic',
+        Properties: {
+          TopicName: env.SNS_TOPIC_NAME,
+        },
+      },
+      SNSDiscountSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: env.DISCOUNTS_EMAIL,
+          Protocol: 'email',
+          TopicArn: { Ref: env.SNS_TOPIC },
+          FilterPolicy: {
+            price: [{ numeric: [ '<', 10 ] }]
+          }
+        },
+      },
+      SNSOutOfStockSubscription: {
+        Type: 'AWS::SNS::Subscription',
+        Properties: {
+          Endpoint: env.OUT_OF_STOCK_EMAIL,
+          Protocol: 'email',
+          TopicArn: { Ref: env.SNS_TOPIC },
+          FilterPolicy: {
+            count: [{ numeric: [ '<', 5 ] }]
+          }
+        },
+      },
+    },
+    Outputs: {
+      SQSQueueInstanceARN: {
+        Description: 'SQS Queue instance',
+        Value: {
+          'Fn::GetAtt': [ 'SQSQueue', 'Arn' ],
+        },
+        Export: {
+          Name: env.SQS_QUEUE_NAME,
+        },
+      },
+      SQSQueueInstanceURL: {
+        Description: 'SQS Queue instance',
+        Value: {
+          Ref: env.SQS_QUEUE
+        },
+        Export: {
+          Name: env.SQS_QUEUE_NAME_URL,
+        },
+      },
+    },
   }
 };
 
