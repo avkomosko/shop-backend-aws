@@ -7,7 +7,16 @@ export default {
     {
       http: {
         method: 'post',
-        cors: true,
+         cors: {
+          origin: '*',
+          headers: [
+            'Content-Type',
+            'X-Amz-Date',
+            'Authorization',
+            'X-Api-Key',
+            'X-Amz-Security-Token'
+          ]
+        },
         path: 'products',
         responseData: productPOSTResponseData
       },
