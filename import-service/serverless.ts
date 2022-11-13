@@ -19,38 +19,37 @@ const serverlessConfiguration: AWS = {
     stage: 'dev',
     apiGateway: {
       minimumCompressionSize: 1024,
-      shouldStartNameWithService: true,
+      shouldStartNameWithService: true
     },
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1',
       NODE_OPTIONS: '--enable-source-maps --stack-trace-limit=1000',
       S3_BUCKET_NAME: env.S3_BUCKET_NAME,
       SQS_QUEUE_URL: { 'Fn::ImportValue': `${env.SQS_QUEUE_NAME}URL` }
-
     },
     iamRoleStatements: [
       {
         Effect: 'Allow',
         Action: ['s3:*'],
-        Resource: `arn:aws:s3:::${env.S3_BUCKET_NAME}`,
+        Resource: `arn:aws:s3:::${env.S3_BUCKET_NAME}`
       },
       {
         Effect: 'Allow',
         Action: ['s3:*'],
-        Resource: `arn:aws:s3:::${env.S3_BUCKET_NAME}/*`,
+        Resource: `arn:aws:s3:::${env.S3_BUCKET_NAME}/*`
       },
       {
         Effect: 'Allow',
         Action: ['sqs:*'],
-        Resource: { 'Fn::ImportValue': `${env.SQS_QUEUE_NAME}` },
-      },
+        Resource: { 'Fn::ImportValue': `${env.SQS_QUEUE_NAME}` }
+      }
     ],
   },
   functions: { importProductFile, importFileParser },
   package: { individually: true },
   custom: {
-    esbuild: esBuildConfiguration,
-  },
+    esbuild: esBuildConfiguration
+  }
 };
 
 module.exports = serverlessConfiguration;
