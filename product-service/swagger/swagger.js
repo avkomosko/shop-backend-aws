@@ -158,6 +158,10 @@
         "title": {
           "title": "Product.title",
           "type": "string"
+        },
+        "imgUrl": {
+          "title": "Product.imgUrl",
+          "type": "string"
         }
       },
       "required": [
@@ -165,7 +169,8 @@
         "description",
         "id",
         "price",
-        "title"
+        "title",
+        "imgUrl"
       ],
       "additionalProperties": false,
       "title": "Product",

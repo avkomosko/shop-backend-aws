@@ -3,7 +3,8 @@ export interface Product {
   description: string,
   id: string,
   price: number,
-  title: string
+  title: string,
+  imgUrl: string
 }
 
 export type ProductWithoutCount = Omit<Product, 'count'>;
